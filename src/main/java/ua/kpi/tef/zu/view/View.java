@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 /**
- * Created by Anton Domin on 2020-02-11
+ * Created by Anton Domin on 2020-02-14
  */
 
 public class View {

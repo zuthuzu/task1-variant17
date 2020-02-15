@@ -7,7 +7,7 @@ import ua.kpi.tef.zu.view.View;
 import java.util.Scanner;
 
 /**
- * Created by Anton Domin on 2020-02-11
+ * Created by Anton Domin on 2020-02-14
  */
 
 public class Controller {

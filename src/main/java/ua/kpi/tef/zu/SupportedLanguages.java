@@ -2,6 +2,10 @@ package ua.kpi.tef.zu;
 
 import java.util.Locale;
 
+/**
+ * Created by Anton Domin on 2020-02-11
+ */
+
 public enum SupportedLanguages {
 	ENGLISH ("To select English, enter '1'."),
 	RUSSIAN ("Чтобы выбрать русский язык, введите '2'.");
