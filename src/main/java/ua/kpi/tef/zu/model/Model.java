@@ -24,7 +24,6 @@ public class Model {
 	private HashSet<String> filterDays = new HashSet<>();
 
 	public Model() {
-		loadActiveTours();
 	}
 
 	/**
@@ -32,7 +31,7 @@ public class Model {
 	 * <br><br>
 	 * At the current stage it generates a bunch of tours randomly, for demonstration purposes.
 	 */
-	private void loadActiveTours() {
+	public void loadActiveTours() {
 		generateRandomTours();
 		applyFilters();
 	}
@@ -40,8 +39,8 @@ public class Model {
 	private void generateRandomTours() {
 		int totalTourAmount = 300;
 		int randomPropertyValue;
-		int priceFloor = 200;
-		int priceCeiling = 15000;
+		int priceFloor = 2;
+		int priceCeiling = 150;
 
 		for (int i = 0; i < totalTourAmount; i++) {
 			Tour sampleTour = new Tour();
@@ -53,7 +52,7 @@ public class Model {
 			}
 
 			randomPropertyValue = (int) (Math.random() * (priceCeiling - priceFloor) + priceFloor);
-			sampleTour.setPrice(randomPropertyValue);
+			sampleTour.setPrice(randomPropertyValue * 100);
 
 			activeTours.add(sampleTour);
 		}
@@ -99,6 +98,10 @@ public class Model {
 		}
 
 		return result.toArray(new String[0]);
+	}
+
+	public void addNewTour(Tour tour) {
+		activeTours.add(tour);
 	}
 
 	public String[] getAvailableValues(TourProperties property) {

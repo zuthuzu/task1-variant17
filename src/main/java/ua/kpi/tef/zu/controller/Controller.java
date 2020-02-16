@@ -43,6 +43,8 @@ public class Controller {
 	}
 
 	private void fillValuePools() {
+		model.loadActiveTours();
+
 		for (TourProperties property : TourProperties.values()) {
 			property.getPool().setAvailableValues(model.getAvailableValues(property));
 			property.getPool().sortInChosenLanguage(view);
