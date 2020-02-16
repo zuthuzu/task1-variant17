@@ -1,4 +1,4 @@
-package ua.kpi.tef.zu.controller;
+package ua.kpi.tef.zu.model;
 
 /**
  * Created by Anton Domin on 2020-02-15

@@ -11,13 +11,19 @@ import java.util.ResourceBundle;
  * Created by Anton Domin on 2020-02-14
  */
 
+@SuppressWarnings("SpellCheckingInspection")
 public class View {
 	private SupportedLanguages currentLanguage;
 	private ResourceBundle bundle;
 	private final String BUNDLE_NAME = "travel17";
 
 	public static final String USER_WELCOME = "user.welcome";
+	public static final String USER_BYE = "user.bye";
 	public static final String WRONG_INPUT = "input.wrong";
+	public static final String INPUT_MAIN_MENU = "input.mainmenu";
+	public static final String INPUT_DROP_FILTER = "input.dropfilter";
+	public static final String INPUT_RETURN = "input.return";
+	public static final String INPUT_EXIT = "input.exit";
 
 	private DateFormat dateFormat;
 
