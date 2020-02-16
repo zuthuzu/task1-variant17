@@ -5,6 +5,7 @@ import ua.kpi.tef.zu.model.Model;
 import ua.kpi.tef.zu.model.Tour;
 import ua.kpi.tef.zu.view.View;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -16,7 +17,7 @@ public class Controller {
 
 	@SuppressWarnings("SpellCheckingInspection")
 	private String inputTokens = "1234567890ABCDE";
-	private int howManyTopToursToDisplay = 10;
+	private int howManyTopToursToDisplay = 10; //this number must not exceed the length of inputTokens
 
 	// Constructor
 	private Model model;
@@ -44,6 +45,7 @@ public class Controller {
 	private void fillValuePools() {
 		for (TourProperties property : TourProperties.values()) {
 			property.getPool().setAvailableValues(model.getAvailableValues(property));
+			property.getPool().sortInChosenLanguage(view);
 		}
 	}
 
@@ -76,10 +78,10 @@ public class Controller {
 			chosenMenuItem = numericalMenuChoice(groupChoiceLoop(sc,
 					createChoiceRegex(TourProperties.values().length + 3, false, true)));
 
-		} while (processSelectionAndContinue(sc, chosenMenuItem));
+		} while (processMainMenuAndContinue(sc, chosenMenuItem));
 	}
 
-	private boolean processSelectionAndContinue(Scanner sc, int chosenMenuItem) {
+	private boolean processMainMenuAndContinue(Scanner sc, int chosenMenuItem) {
 		boolean userWishesToContinue = true;
 		int filtersInMenu = TourProperties.values().length;
 
@@ -137,7 +139,7 @@ public class Controller {
 
 		for (int i = 0; i < property.getPool().size(); i++) {
 			view.printAndKeepLine(inputTokens.charAt(i) + ":");
-			view.printAndEndLine(property.getPool().get(i));
+			view.printAndEndLine(cullLeadingZeroes(property.getPool().get(i)));
 		}
 		view.printAndEndLine(View.INPUT_DROP_FILTER);
 		view.printAndEndLine(View.INPUT_RETURN);
@@ -145,28 +147,69 @@ public class Controller {
 
 	private void selectTopTour(Scanner sc, boolean ascendingOrder) {
 		Tour[] topTours = model.getTopTours(ascendingOrder, howManyTopToursToDisplay);
+		int chosenMenuItem;
 
-		showTourMenu(topTours);
+		do {
+			showTourMenu(topTours);
 
-		int menuItem = numericalMenuChoice(groupChoiceLoop(sc, createChoiceRegex(topTours.length, false, true)));
+			chosenMenuItem = numericalMenuChoice(groupChoiceLoop(sc,
+					createChoiceRegex(topTours.length, false, true)));
 
-		if (menuItem >= 0 && menuItem < topTours.length) {
-			showTourDetails(topTours[menuItem]);
-		}
+		} while (processTourAndContinue(sc, topTours, chosenMenuItem));
 	}
 
 	private void showTourMenu(Tour[] topTours) {
 		view.printAndEndLine(View.USER_TOURS_HEADER);
 
+		int menuItemNumber = 0;
+
 		for (Tour topTour : topTours) {
-			view.printAndEndLine(topTour.toString());
+			view.printAndKeepLine(inputTokens.charAt(menuItemNumber++) + ":");
+			view.printAndEndLine(getTourBrief(topTour));
 		}
 
 		view.printAndEndLine(View.INPUT_RETURN);
 	}
 
-	private void showTourDetails(Tour tour) {
+	private String getTourBrief(Tour tour) {
+		return view.getLocalizedText(tour.getCountry()) + ", " +
+				view.getLocalizedText(tour.getGoal()) + ", " +
+				view.getLocalizedText(TourProperties.DAYS.toString()) + ": " +
+				view.getLocalizedText(cullLeadingZeroes(tour.getDays())) + ", " +
+				view.getLocalizedText(TourProperties.TRANSPORT.toString()) + ": " +
+				view.getLocalizedText(tour.getTransport()) + ".";
+	}
 
+	private boolean processTourAndContinue(Scanner sc, Tour[] tourMenu, int menuItem) {
+		if (menuItem >= 0 && menuItem < tourMenu.length) {
+			showTourDetails(sc, tourMenu[menuItem]);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private void showTourDetails(Scanner sc, Tour tour) {
+		view.printAndKeepLine(TourProperties.COUNTRIES.toString(), ": ");
+		view.printAndEndLine(tour.getCountry());
+
+		view.printAndKeepLine(TourProperties.DAYS.toString(), ": ");
+		view.printAndEndLine(cullLeadingZeroes(tour.getDays()));
+
+		view.printAndKeepLine(TourProperties.TRANSPORT.toString(), ": ");
+		view.printAndEndLine(tour.getTransport());
+
+		view.printAndKeepLine(TourProperties.FOOD.toString(), ": ");
+		view.printAndEndLine(tour.getFood());
+
+		DecimalFormat moneyFormat = new DecimalFormat("0.00");
+		view.printAndKeepLine(View.PROPERTY_PRICE, ": ");
+		view.printAndEndLine(model.getCurrency() + moneyFormat.format(tour.getPrice()));
+
+		view.printAndEndLine(View.USER_TOURS_DETAILS);
+		view.printAndEndLine(View.INPUT_RETURN);
+
+		numericalMenuChoice(groupChoiceLoop(sc, createChoiceRegex(1, false, true)));
 	}
 
 	private String[] convertInputIntoValues(String userInput, TourProperties property) {
@@ -227,4 +270,12 @@ public class Controller {
 		return inputValue;
 	}
 
+	private String cullLeadingZeroes(String value) {
+		int zeroes = 0;
+
+		while (zeroes < value.length() && value.charAt(zeroes) == '0')
+			zeroes++;
+
+		return value.substring(zeroes);
+	}
 }

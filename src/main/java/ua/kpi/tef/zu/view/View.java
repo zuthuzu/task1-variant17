@@ -3,8 +3,6 @@ package ua.kpi.tef.zu.view;
 import ua.kpi.tef.zu.SupportedLanguages;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.ResourceBundle;
 
 /**
@@ -21,6 +19,8 @@ public class View {
 	public static final String USER_BYE = "user.bye";
 	public static final String USER_TOURS_AVAILABLE = "user.tours.available";
 	public static final String USER_TOURS_HEADER = "user.tours.header";
+	public static final String USER_TOURS_DETAILS = "user.tours.details";
+	public static final String PROPERTY_PRICE = "property.price";
 	public static final String WRONG_INPUT = "input.wrong";
 	public static final String INPUT_MAIN_MENU = "input.mainmenu";
 	public static final String INPUT_DROP_FILTER = "input.dropfilter";
@@ -28,8 +28,6 @@ public class View {
 	public static final String INPUT_VIEW_ASCENDING = "input.view.ascending";
 	public static final String INPUT_VIEW_DESCENDING = "input.view.descending";
 	public static final String INPUT_EXIT = "input.exit";
-
-	private DateFormat dateFormat;
 
 	public View() {
 		currentLanguage = SupportedLanguages.ENGLISH;
@@ -39,20 +37,17 @@ public class View {
 	public void setLocalization(SupportedLanguages lang) {
 		currentLanguage = lang;
 		bundle = ResourceBundle.getBundle(BUNDLE_NAME, SupportedLanguages.determineLocale(lang));
-		dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 	}
 
 	public SupportedLanguages getCurrentLanguage() { return currentLanguage; }
 
 	public void printAndKeepLine(String message) { System.out.print(getLocalizedText(message) + " "); }
 
+	public void printAndKeepLine(String message, String separator) { System.out.print(getLocalizedText(message) + separator); }
+
 	public void printAndEndLine(String message) { System.out.println(getLocalizedText(message)); }
 
-	public String getLocalizedText(String property) {
-		return bundle.keySet().contains(property) ? bundle.getString(property) : property;
-	}
-
-	public String getLocalizedDate(Date date) {
-		return dateFormat.format(date);
+	public String getLocalizedText(String token) {
+		return bundle.keySet().contains(token) ? bundle.getString(token) : token;
 	}
 }
