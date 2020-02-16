@@ -32,11 +32,19 @@ public class Controller {
 
 		selectLanguage(sc);
 
+		fillValuePools();
+
 		view.printAndEndLine(View.USER_WELCOME);
 
 		coreInputLoop(sc);
 
 		view.printAndEndLine(View.USER_BYE);
+	}
+
+	private void fillValuePools() {
+		for (TourProperties property : TourProperties.values()) {
+			property.getPool().setAvailableValues(model.getAvailableValues(property));
+		}
 	}
 
 	/**
@@ -83,9 +91,9 @@ public class Controller {
 		if (chosenMenuItem < 0 || chosenMenuItem == filtersInMenu + 2) {
 			userWishesToContinue = false;
 		} else if (chosenMenuItem == filtersInMenu) {
-			showTourMenu(true);
+			selectTopTour(sc, true);
 		} else if (chosenMenuItem == filtersInMenu + 1) {
-			showTourMenu(false);
+			selectTopTour(sc, false);
 		} else {
 			filterProperty(sc, TourProperties.values()[chosenMenuItem]);
 		}
@@ -125,6 +133,8 @@ public class Controller {
 	}
 
 	private void showPropertyMenu(TourProperties property) {
+		view.printAndEndLine(property.toString());
+
 		for (int i = 0; i < property.getPool().size(); i++) {
 			view.printAndKeepLine(inputTokens.charAt(i) + ":");
 			view.printAndEndLine(property.getPool().get(i));
@@ -133,11 +143,30 @@ public class Controller {
 		view.printAndEndLine(View.INPUT_RETURN);
 	}
 
-	private void showTourMenu(boolean ascendingOrder) {
+	private void selectTopTour(Scanner sc, boolean ascendingOrder) {
 		Tour[] topTours = model.getTopTours(ascendingOrder, howManyTopToursToDisplay);
+
+		showTourMenu(topTours);
+
+		int menuItem = numericalMenuChoice(groupChoiceLoop(sc, createChoiceRegex(topTours.length, false, true)));
+
+		if (menuItem >= 0 && menuItem < topTours.length) {
+			showTourDetails(topTours[menuItem]);
+		}
+	}
+
+	private void showTourMenu(Tour[] topTours) {
+		view.printAndEndLine(View.USER_TOURS_HEADER);
+
 		for (Tour topTour : topTours) {
 			view.printAndEndLine(topTour.toString());
 		}
+
+		view.printAndEndLine(View.INPUT_RETURN);
+	}
+
+	private void showTourDetails(Tour tour) {
+
 	}
 
 	private String[] convertInputIntoValues(String userInput, TourProperties property) {

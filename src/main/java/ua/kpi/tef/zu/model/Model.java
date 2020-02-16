@@ -5,12 +5,15 @@ import ua.kpi.tef.zu.controller.TourProperties;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.TreeSet;
 
 /**
  * Created by Anton Domin on 2020-02-14
  */
 
 public class Model {
+	private char currency = '\u20AC'; //euro
+
 	private ArrayList<Tour> activeTours = new ArrayList<>();
 	private ArrayList<Tour> filteredTours = new ArrayList<>();
 
@@ -18,6 +21,7 @@ public class Model {
 	private HashSet<String> filterTransport = new HashSet<>();
 	private HashSet<String> filterGoal = new HashSet<>();
 	private HashSet<String> filterFood = new HashSet<>();
+	private HashSet<String> filterDays = new HashSet<>();
 
 	public Model() {
 		loadActiveTours();
@@ -43,8 +47,9 @@ public class Model {
 			Tour sampleTour = new Tour();
 
 			for (TourProperties property : TourProperties.values()) {
-				randomPropertyValue = (int) (Math.random() * property.getPool().size());
-				sampleTour.setProperty(property, property.getPool().get(randomPropertyValue));
+				String[] totalPool = getTotalPropertyPool(property);
+				randomPropertyValue = (int) (Math.random() * totalPool.length);
+				sampleTour.setProperty(property, totalPool[randomPropertyValue]);
 			}
 
 			randomPropertyValue = (int) (Math.random() * (priceCeiling - priceFloor) + priceFloor);
@@ -54,8 +59,62 @@ public class Model {
 		}
 	}
 
+	/**
+	 * A temporary demonstration method, complementary to random generator above.
+	 * <br><br>
+	 * Returns all possible values for a given property, reading them from the corresponding enum, or just guessing.
+	 *
+	 * @param property Property which we need to analyze
+	 * @return Array of its' allowed values.
+	 */
+	private String[] getTotalPropertyPool(TourProperties property) {
+		ArrayList<String> result = new ArrayList<>();
+
+		switch (property) {
+			case COUNTRIES:
+				for (Countries value : Countries.values()) {
+					result.add(value.toString());
+				}
+				break;
+			case TRANSPORT:
+				for (Transport value : Transport.values()) {
+					result.add(value.toString());
+				}
+				break;
+			case TRAVEL_GOALS:
+				for (TravelGoals value : TravelGoals.values()) {
+					result.add(value.toString());
+				}
+				break;
+			case FOOD:
+				for (Food value : Food.values()) {
+					result.add(value.toString());
+				}
+				break;
+			case DAYS:
+				for (int i = 1; i <= 12; i++) {
+					result.add(String.format("%02d", i));
+				}
+				break;
+		}
+
+		return result.toArray(new String[0]);
+	}
+
+	public String[] getAvailableValues(TourProperties property) {
+		TreeSet<String> valuePool = new TreeSet<>();
+
+		for (Tour tour : activeTours) {
+			valuePool.add(tour.getProperty(property));
+		}
+
+		return valuePool.toArray(new String[0]);
+	}
+
 	public void applyFilter(TourProperties property, String[] values) {
-		if (values == null) { return; }
+		if (values == null) {
+			return;
+		}
 
 		switch (property) {
 			case COUNTRIES:
@@ -69,6 +128,9 @@ public class Model {
 				break;
 			case FOOD:
 				setFilterFood(values);
+				break;
+			case DAYS:
+				setFilterDays(values);
 				break;
 		}
 
@@ -95,6 +157,11 @@ public class Model {
 		filterFood.addAll(Arrays.asList(values));
 	}
 
+	private void setFilterDays(String[] values) {
+		filterDays.clear();
+		filterDays.addAll(Arrays.asList(values));
+	}
+
 	private void applyFilters() {
 		filteredTours.clear();
 
@@ -102,7 +169,8 @@ public class Model {
 			if ((filterCountry.size() == 0 || filterCountry.contains(currentTour.getCountry())) &&
 					(filterTransport.size() == 0 || filterTransport.contains(currentTour.getTransport())) &&
 					(filterGoal.size() == 0 || filterGoal.contains(currentTour.getGoal())) &&
-					(filterFood.size() == 0 || filterFood.contains(currentTour.getFood()))) {
+					(filterFood.size() == 0 || filterFood.contains(currentTour.getFood())) &&
+					(filterDays.size() == 0 || filterDays.contains(currentTour.getDays()))) {
 				filteredTours.add(currentTour);
 			}
 		}
@@ -125,7 +193,9 @@ public class Model {
 	}
 
 	private void sortFilteredTours() {
-		if (filteredTours.isEmpty()) { return; }
+		if (filteredTours.isEmpty()) {
+			return;
+		}
 
 		Tour temporaryPointer;
 		boolean hasSwapped;
@@ -134,8 +204,8 @@ public class Model {
 			hasSwapped = false;
 			for (int i = 1; i < filteredTours.size(); i++) {
 				if (filteredTours.get(i - 1).getPrice() > filteredTours.get(i).getPrice()) {
-					temporaryPointer = filteredTours.get(i-1);
-					filteredTours.set(i-1, filteredTours.get(i));
+					temporaryPointer = filteredTours.get(i - 1);
+					filteredTours.set(i - 1, filteredTours.get(i));
 					filteredTours.set(i, temporaryPointer);
 					hasSwapped = true;
 				}
@@ -143,5 +213,6 @@ public class Model {
 		} while (hasSwapped);
 	}
 
+	public char getCurrency() { return currency; }
 
 }

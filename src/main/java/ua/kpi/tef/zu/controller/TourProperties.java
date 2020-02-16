@@ -14,35 +14,43 @@ import ua.kpi.tef.zu.model.TravelGoals;
  */
 
 public enum TourProperties implements RequestingPool {
-	COUNTRIES("property.country") {
+	COUNTRIES("property.country", new PoolOfValues()) {
 		@Override
 		public PoolOfValues getPool() {
-			return new PoolOfValues(COUNTRIES, Countries.values());
+			return COUNTRIES.poolOfValues;
 		}
 	},
-	TRANSPORT("property.transport") {
+	TRANSPORT("property.transport", new PoolOfValues()) {
 		@Override
 		public PoolOfValues getPool() {
-			return new PoolOfValues(TRANSPORT, Transport.values());
+			return TRANSPORT.poolOfValues;
 		}
 	},
-	TRAVEL_GOALS("property.goal") {
+	TRAVEL_GOALS("property.goal", new PoolOfValues()) {
 		@Override
 		public PoolOfValues getPool() {
-			return new PoolOfValues(TRAVEL_GOALS, TravelGoals.values());
+			return TRAVEL_GOALS.poolOfValues;
 		}
 	},
-	FOOD("property.food") {
+	FOOD("property.food", new PoolOfValues()) {
 		@Override
 		public PoolOfValues getPool() {
-			return new PoolOfValues(FOOD, Food.values());
+			return FOOD.poolOfValues;
+		}
+	},
+	DAYS("property.days", new PoolOfValues()) {
+		@Override
+		public PoolOfValues getPool() {
+			return DAYS.poolOfValues;
 		}
 	};
 
 	private String value;
+	private PoolOfValues poolOfValues;
 
-	TourProperties(String value) {
+	TourProperties(String value, PoolOfValues poolOfValues) {
 		this.value = value;
+		this.poolOfValues = poolOfValues;
 	}
 
 	@Override

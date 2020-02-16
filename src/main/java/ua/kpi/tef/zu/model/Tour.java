@@ -11,17 +11,10 @@ public class Tour {
 	private String goal;
 	private String transport;
 	private String food;
+	private String days;
 	private int price;
 
 	public Tour() {
-	}
-
-	public Tour(String country, String goal, String transport, String food, int price) {
-		this.country = country;
-		this.goal = goal;
-		this.transport = transport;
-		this.food = food;
-		this.price = price;
 	}
 
 	public void setProperty(TourProperties property, String value) {
@@ -38,6 +31,9 @@ public class Tour {
 			case FOOD:
 				setFood(value);
 				break;
+			case DAYS:
+				setDays(value);
+				break;
 		}
 	}
 
@@ -48,6 +44,8 @@ public class Tour {
 	public void setTransport(String transport) { this.transport = transport; }
 
 	public void setFood(String food) { this.food = food; }
+
+	public void setDays(String days) { this.days = days; }
 
 	public void setPrice(int price) { this.price = price; }
 
@@ -61,6 +59,8 @@ public class Tour {
 				return getGoal();
 			case FOOD:
 				return getFood();
+			case DAYS:
+				return getDays();
 		}
 
 		return "";
@@ -74,6 +74,8 @@ public class Tour {
 
 	public String getFood() { return food; }
 
+	public String getDays() { return days; }
+
 	public int getPrice() { return price; }
 
 	@Override
@@ -83,6 +85,7 @@ public class Tour {
 				", goal='" + goal + '\'' +
 				", transport='" + transport + '\'' +
 				", food='" + food + '\'' +
+				", days='" + days + '\'' +
 				", price=" + price +
 				'}';
 	}

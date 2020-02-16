@@ -20,6 +20,7 @@ public class View {
 	public static final String USER_WELCOME = "user.welcome";
 	public static final String USER_BYE = "user.bye";
 	public static final String USER_TOURS_AVAILABLE = "user.tours.available";
+	public static final String USER_TOURS_HEADER = "user.tours.header";
 	public static final String WRONG_INPUT = "input.wrong";
 	public static final String INPUT_MAIN_MENU = "input.mainmenu";
 	public static final String INPUT_DROP_FILTER = "input.dropfilter";
