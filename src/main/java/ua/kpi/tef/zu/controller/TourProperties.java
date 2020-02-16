@@ -13,26 +13,26 @@ import ua.kpi.tef.zu.model.TravelGoals;
  * In full implementation those pools won't be known in advance, they'll have to be determined via query to the model.
  */
 
-public enum TourProperties implements RequestingPool{
-	COUNTRIES ("property.country") {
+public enum TourProperties implements RequestingPool {
+	COUNTRIES("property.country") {
 		@Override
 		public PoolOfValues getPool() {
 			return new PoolOfValues(COUNTRIES, Countries.values());
 		}
 	},
-	TRANSPORT ("property.transport") {
+	TRANSPORT("property.transport") {
 		@Override
 		public PoolOfValues getPool() {
 			return new PoolOfValues(TRANSPORT, Transport.values());
 		}
 	},
-	TRAVEL_GOALS ("property.goal") {
+	TRAVEL_GOALS("property.goal") {
 		@Override
 		public PoolOfValues getPool() {
 			return new PoolOfValues(TRAVEL_GOALS, TravelGoals.values());
 		}
 	},
-	FOOD ("property.food") {
+	FOOD("property.food") {
 		@Override
 		public PoolOfValues getPool() {
 			return new PoolOfValues(FOOD, Food.values());

@@ -2,6 +2,7 @@ package ua.kpi.tef.zu.controller;
 
 import ua.kpi.tef.zu.SupportedLanguages;
 import ua.kpi.tef.zu.model.Model;
+import ua.kpi.tef.zu.model.Tour;
 import ua.kpi.tef.zu.view.View;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class Controller {
 
 	@SuppressWarnings("SpellCheckingInspection")
 	private String inputTokens = "1234567890ABCDE";
+	private int howManyTopToursToDisplay = 10;
 
 	// Constructor
 	private Model model;
@@ -58,57 +60,100 @@ public class Controller {
 	}
 
 	private void coreInputLoop(Scanner sc) {
-		int filterMenuSize = TourProperties.values().length;
 		int chosenMenuItem;
-		boolean userWishesToExit = false;
 
 		do {
-			showMainMenu(filterMenuSize);
+			showMainMenu();
 
 			chosenMenuItem = numericalMenuChoice(groupChoiceLoop(sc,
-					createChoiceRegex(filterMenuSize + 1, false, true)));
+					createChoiceRegex(TourProperties.values().length + 3, false, true)));
 
-			if (chosenMenuItem >= 0 && chosenMenuItem < filterMenuSize) {
-				filterProperty(sc, TourProperties.values()[chosenMenuItem]);
-			} else {
-				userWishesToExit = true;
-			}
-		} while (!userWishesToExit);
+		} while (processSelectionAndContinue(sc, chosenMenuItem));
 	}
 
-	private void showMainMenu(int filterMenuSize) {
+	private boolean processSelectionAndContinue(Scanner sc, int chosenMenuItem) {
+		boolean userWishesToContinue = true;
+		int filtersInMenu = TourProperties.values().length;
+
+		//after filters Main Menu currently has three additional options:
+		//show tours ascending at the index chosenMenuItem == filtersInMenu,
+		//show tours descending at the index chosenMenuItem == filtersInMenu + 1,
+		//exit program at the index chosenMenuItem == filtersInMenu + 2 or chosenMenuItem == -1
+
+		if (chosenMenuItem < 0 || chosenMenuItem == filtersInMenu + 2) {
+			userWishesToContinue = false;
+		} else if (chosenMenuItem == filtersInMenu) {
+			showTourMenu(true);
+		} else if (chosenMenuItem == filtersInMenu + 1) {
+			showTourMenu(false);
+		} else {
+			filterProperty(sc, TourProperties.values()[chosenMenuItem]);
+		}
+		return userWishesToContinue;
+	}
+
+	@SuppressWarnings("UnusedAssignment")
+	private void showMainMenu() {
+		view.printAndKeepLine(View.USER_TOURS_AVAILABLE);
+		view.printAndEndLine(Integer.toString(model.conformsToFilter()));
+
 		view.printAndEndLine(View.INPUT_MAIN_MENU);
 
-		for (int i = 0; i < filterMenuSize; i++) {
-			view.printAndKeepLine(inputTokens.charAt(i) + ":");
-			view.printAndEndLine((TourProperties.values()[i].toString()));
+		int menuItemNumber = 0;
+
+		for (TourProperties property : TourProperties.values()) {
+			view.printAndKeepLine(inputTokens.charAt(menuItemNumber++) + ":");
+			view.printAndEndLine((property.toString()));
 		}
 
-		view.printAndKeepLine(inputTokens.charAt(filterMenuSize) + ":");
+		view.printAndKeepLine(inputTokens.charAt(menuItemNumber++) + ":");
+		view.printAndEndLine(View.INPUT_VIEW_ASCENDING);
+
+		view.printAndKeepLine(inputTokens.charAt(menuItemNumber++) + ":");
+		view.printAndEndLine(View.INPUT_VIEW_DESCENDING);
+
+		view.printAndKeepLine(inputTokens.charAt(menuItemNumber++) + ":");
 		view.printAndEndLine(View.INPUT_EXIT);
 	}
 
 	private void filterProperty(Scanner sc, TourProperties property) {
-		int poolSize = property.getPool().size();
+		showPropertyMenu(property);
 
-		for (int i = 0; i < poolSize; i++) {
+		String userInput = groupChoiceLoop(sc, createChoiceRegex(property.getPool().size(), true, true));
+
+		model.applyFilter(property, convertInputIntoValues(userInput, property));
+	}
+
+	private void showPropertyMenu(TourProperties property) {
+		for (int i = 0; i < property.getPool().size(); i++) {
 			view.printAndKeepLine(inputTokens.charAt(i) + ":");
 			view.printAndEndLine(property.getPool().get(i));
 		}
+		view.printAndEndLine(View.INPUT_DROP_FILTER);
+		view.printAndEndLine(View.INPUT_RETURN);
+	}
 
+	private void showTourMenu(boolean ascendingOrder) {
+		Tour[] topTours = model.getTopTours(ascendingOrder, howManyTopToursToDisplay);
+		for (Tour topTour : topTours) {
+			view.printAndEndLine(topTour.toString());
+		}
+	}
+
+	private String[] convertInputIntoValues(String userInput, TourProperties property) {
 		ArrayList<String> chosenValues = new ArrayList<>();
 
-		for (char value : groupChoiceLoop(sc, createChoiceRegex(poolSize, true, true)).toCharArray()) {
+		for (char value : userInput.toCharArray()) {
 			if (value == '-') {
-				break; //according to regex there shouldn't be any other characters in userInput, but just to make sure
+				break; //according to regex there shouldn't be any other characters in userInput, but just to be sure
 			} else if (value == '.') {
-				return;
+				return null;
 			} else {
 				chosenValues.add(property.getPool().get(numericalMenuChoice(value)));
 			}
 		}
 
-		model.applyFilter(property, chosenValues.toArray(new String[0]));
+		return chosenValues.toArray(new String[0]);
 	}
 
 	/**

@@ -19,10 +19,13 @@ public class View {
 
 	public static final String USER_WELCOME = "user.welcome";
 	public static final String USER_BYE = "user.bye";
+	public static final String USER_TOURS_AVAILABLE = "user.tours.available";
 	public static final String WRONG_INPUT = "input.wrong";
 	public static final String INPUT_MAIN_MENU = "input.mainmenu";
 	public static final String INPUT_DROP_FILTER = "input.dropfilter";
 	public static final String INPUT_RETURN = "input.return";
+	public static final String INPUT_VIEW_ASCENDING = "input.view.ascending";
+	public static final String INPUT_VIEW_DESCENDING = "input.view.descending";
 	public static final String INPUT_EXIT = "input.exit";
 
 	private DateFormat dateFormat;
