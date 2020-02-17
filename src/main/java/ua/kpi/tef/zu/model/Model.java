@@ -1,21 +1,18 @@
 package ua.kpi.tef.zu.model;
 
 import ua.kpi.tef.zu.controller.TourProperties;
+import ua.kpi.tef.zu.model.datapool.RandomTourGenerator;
+import ua.kpi.tef.zu.model.tourfactory.AbstractTour;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Created by Anton Domin on 2020-02-14
  */
 
 public class Model {
-	private char currency = '\u20AC'; //euro
-
-	private ArrayList<Tour> activeTours = new ArrayList<>();
-	private ArrayList<Tour> filteredTours = new ArrayList<>();
+	private ArrayList<AbstractTour> activeTours = new ArrayList<>();
+	private ArrayList<AbstractTour> filteredTours = new ArrayList<>();
 
 	private HashSet<String> filterCountry = new HashSet<>();
 	private HashSet<String> filterTransport = new HashSet<>();
@@ -32,82 +29,23 @@ public class Model {
 	 * At the current stage it generates a bunch of tours randomly, for demonstration purposes.
 	 */
 	public void loadActiveTours() {
-		generateRandomTours();
+		Collections.addAll(activeTours, RandomTourGenerator.generateTours());
 		applyFilters();
 	}
 
-	private void generateRandomTours() {
-		int totalTourAmount = 300;
-		int randomPropertyValue;
-		int priceFloor = 2;
-		int priceCeiling = 150;
-
-		for (int i = 0; i < totalTourAmount; i++) {
-			Tour sampleTour = new Tour();
-
-			for (TourProperties property : TourProperties.values()) {
-				String[] totalPool = getTotalPropertyPool(property);
-				randomPropertyValue = (int) (Math.random() * totalPool.length);
-				sampleTour.setProperty(property, totalPool[randomPropertyValue]);
-			}
-
-			randomPropertyValue = (int) (Math.random() * (priceCeiling - priceFloor) + priceFloor);
-			sampleTour.setPrice(randomPropertyValue * 100);
-
-			activeTours.add(sampleTour);
-		}
-	}
-
-	/**
-	 * A temporary demonstration method, complementary to random generator above.
-	 * <br><br>
-	 * Returns all possible values for a given property, reading them from the corresponding enum, or just guessing.
-	 *
-	 * @param property Property which we need to analyze
-	 * @return Array of its' allowed values.
-	 */
-	private String[] getTotalPropertyPool(TourProperties property) {
-		ArrayList<String> result = new ArrayList<>();
-
-		switch (property) {
-			case COUNTRIES:
-				for (Countries value : Countries.values()) {
-					result.add(value.toString());
-				}
-				break;
-			case TRANSPORT:
-				for (Transport value : Transport.values()) {
-					result.add(value.toString());
-				}
-				break;
-			case TRAVEL_GOALS:
-				for (TravelGoals value : TravelGoals.values()) {
-					result.add(value.toString());
-				}
-				break;
-			case FOOD:
-				for (Food value : Food.values()) {
-					result.add(value.toString());
-				}
-				break;
-			case DAYS:
-				for (int i = 1; i <= 12; i++) {
-					result.add(String.format("%02d", i));
-				}
-				break;
-		}
-
-		return result.toArray(new String[0]);
-	}
-
-	public void addNewTour(Tour tour) {
+	public void addNewTour(AbstractTour tour) {
 		activeTours.add(tour);
 	}
 
+	/**
+	 * Returns all values of a given property in current tour selection, for filtering purposes.
+	 * @param property which property should be queried
+	 * @return array of non-repeating string tokens in the exact way they're stored in tours
+	 */
 	public String[] getAvailableValues(TourProperties property) {
 		TreeSet<String> valuePool = new TreeSet<>();
 
-		for (Tour tour : activeTours) {
+		for (AbstractTour tour : activeTours) {
 			valuePool.add(tour.getProperty(property));
 		}
 
@@ -168,7 +106,7 @@ public class Model {
 	private void applyFilters() {
 		filteredTours.clear();
 
-		for (Tour currentTour : activeTours) {
+		for (AbstractTour currentTour : activeTours) {
 			if ((filterCountry.size() == 0 || filterCountry.contains(currentTour.getCountry())) &&
 					(filterTransport.size() == 0 || filterTransport.contains(currentTour.getTransport())) &&
 					(filterGoal.size() == 0 || filterGoal.contains(currentTour.getGoal())) &&
@@ -183,24 +121,28 @@ public class Model {
 		return filteredTours.size();
 	}
 
-	public Tour[] getTopTours(boolean ascendingOrder, int howMany) {
+	public AbstractTour[] getTopTours(boolean ascendingOrder, int howMany) {
 		sortFilteredTours();
 
 		int howManyInFact = Math.min(howMany, filteredTours.size());
 
 		if (ascendingOrder) {
-			return filteredTours.subList(0, howManyInFact).toArray(new Tour[0]);
+			return filteredTours.subList(0, howManyInFact).toArray(new AbstractTour[0]);
 		} else {
-			return filteredTours.subList(filteredTours.size() - howManyInFact, filteredTours.size()).toArray(new Tour[0]);
+			return filteredTours.subList(filteredTours.size() - howManyInFact, filteredTours.size()).toArray(new AbstractTour[0]);
 		}
 	}
 
+
+	/**
+	 * At the moment sorts only by price, in ascending order, via bubblesort.
+	 */
 	private void sortFilteredTours() {
 		if (filteredTours.isEmpty()) {
 			return;
 		}
 
-		Tour temporaryPointer;
+		AbstractTour temporaryPointer;
 		boolean hasSwapped;
 
 		do {
@@ -215,7 +157,4 @@ public class Model {
 			}
 		} while (hasSwapped);
 	}
-
-	public char getCurrency() { return currency; }
-
 }

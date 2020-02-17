@@ -1,10 +1,5 @@
 package ua.kpi.tef.zu.controller;
 
-import ua.kpi.tef.zu.model.Countries;
-import ua.kpi.tef.zu.model.Food;
-import ua.kpi.tef.zu.model.Transport;
-import ua.kpi.tef.zu.model.TravelGoals;
-
 /**
  * Created by Anton Domin on 2020-02-16
  * <br><br>

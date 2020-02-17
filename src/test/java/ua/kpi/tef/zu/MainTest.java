@@ -6,6 +6,12 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import ua.kpi.tef.zu.controller.TourProperties;
 import ua.kpi.tef.zu.model.*;
+import ua.kpi.tef.zu.model.datapool.Countries;
+import ua.kpi.tef.zu.model.datapool.Food;
+import ua.kpi.tef.zu.model.datapool.Transport;
+import ua.kpi.tef.zu.model.datapool.TravelGoals;
+import ua.kpi.tef.zu.model.tourfactory.AbstractTour;
+import ua.kpi.tef.zu.model.tourfactory.TourFactory;
 
 /**
  * Unit test for simple App.
@@ -25,11 +31,10 @@ public class MainTest
     public void testModelFilters()
     {
         Model model = new Model();
-        Tour tour = new Tour();
+        AbstractTour tour = TourFactory.createTourFromFactory(TravelGoals.SHOPPING);
 
         tour.setCountry(Countries.ITALY.toString());
         tour.setTransport(Transport.PLANE.toString());
-        tour.setGoal(TravelGoals.SHOPPING.toString());
         tour.setFood(Food.BREAKFAST.toString());
         tour.setDays("10");
 

@@ -1,4 +1,4 @@
-package ua.kpi.tef.zu.model;
+package ua.kpi.tef.zu.model.datapool;
 
 /**
  * Created by Anton Domin on 2020-02-15
