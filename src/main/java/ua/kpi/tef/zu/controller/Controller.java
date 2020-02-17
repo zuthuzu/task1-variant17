@@ -2,10 +2,9 @@ package ua.kpi.tef.zu.controller;
 
 import ua.kpi.tef.zu.SupportedLanguages;
 import ua.kpi.tef.zu.model.Model;
-import ua.kpi.tef.zu.model.Tour;
+import ua.kpi.tef.zu.model.tourfactory.AbstractTour;
 import ua.kpi.tef.zu.view.View;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -16,8 +15,9 @@ import java.util.Scanner;
 public class Controller {
 
 	@SuppressWarnings("SpellCheckingInspection")
-	private String inputTokens = "1234567890ABCDE";
-	private int howManyTopToursToDisplay = 10; //this number must not exceed the length of inputTokens
+	private final String inputTokens = "1234567890ABCDE";
+	private final int howManyTopToursToDisplay = 10; //this number must not exceed the length of inputTokens
+	private final char currency = '\u20AC'; //euro
 
 	// Constructor
 	private Model model;
@@ -141,14 +141,14 @@ public class Controller {
 
 		for (int i = 0; i < property.getPool().size(); i++) {
 			view.printAndKeepLine(inputTokens.charAt(i) + ":");
-			view.printAndEndLine(cullLeadingZeroes(property.getPool().get(i)));
+			view.printAndEndLine(view.cullLeadingZeroes(property.getPool().get(i)));
 		}
 		view.printAndEndLine(View.INPUT_DROP_FILTER);
 		view.printAndEndLine(View.INPUT_RETURN);
 	}
 
 	private void selectTopTour(Scanner sc, boolean ascendingOrder) {
-		Tour[] topTours = model.getTopTours(ascendingOrder, howManyTopToursToDisplay);
+		AbstractTour[] topTours = model.getTopTours(ascendingOrder, howManyTopToursToDisplay);
 		int chosenMenuItem;
 
 		do {
@@ -160,29 +160,20 @@ public class Controller {
 		} while (processTourAndContinue(sc, topTours, chosenMenuItem));
 	}
 
-	private void showTourMenu(Tour[] topTours) {
+	private void showTourMenu(AbstractTour[] topTours) {
 		view.printAndEndLine(View.USER_TOURS_HEADER);
 
 		int menuItemNumber = 0;
 
-		for (Tour topTour : topTours) {
+		for (AbstractTour topTour : topTours) {
 			view.printAndKeepLine(inputTokens.charAt(menuItemNumber++) + ":");
-			view.printAndEndLine(getTourBrief(topTour));
+			view.printAndEndLine(topTour.getLocalizedBrief(view));
 		}
 
 		view.printAndEndLine(View.INPUT_RETURN);
 	}
 
-	private String getTourBrief(Tour tour) {
-		return view.getLocalizedText(tour.getCountry()) + ", " +
-				view.getLocalizedText(tour.getGoal()) + ", " +
-				view.getLocalizedText(TourProperties.DAYS.toString()) + ": " +
-				view.getLocalizedText(cullLeadingZeroes(tour.getDays())) + ", " +
-				view.getLocalizedText(TourProperties.TRANSPORT.toString()) + ": " +
-				view.getLocalizedText(tour.getTransport()) + ".";
-	}
-
-	private boolean processTourAndContinue(Scanner sc, Tour[] tourMenu, int menuItem) {
+	private boolean processTourAndContinue(Scanner sc, AbstractTour[] tourMenu, int menuItem) {
 		if (menuItem >= 0 && menuItem < tourMenu.length) {
 			showTourDetails(sc, tourMenu[menuItem]);
 			return true;
@@ -191,22 +182,8 @@ public class Controller {
 		}
 	}
 
-	private void showTourDetails(Scanner sc, Tour tour) {
-		view.printAndKeepLine(TourProperties.COUNTRIES.toString(), ": ");
-		view.printAndEndLine(tour.getCountry());
-
-		view.printAndKeepLine(TourProperties.DAYS.toString(), ": ");
-		view.printAndEndLine(cullLeadingZeroes(tour.getDays()));
-
-		view.printAndKeepLine(TourProperties.TRANSPORT.toString(), ": ");
-		view.printAndEndLine(tour.getTransport());
-
-		view.printAndKeepLine(TourProperties.FOOD.toString(), ": ");
-		view.printAndEndLine(tour.getFood());
-
-		DecimalFormat moneyFormat = new DecimalFormat("0.00");
-		view.printAndKeepLine(View.PROPERTY_PRICE, ": ");
-		view.printAndEndLine(model.getCurrency() + moneyFormat.format(tour.getPrice()));
+	private void showTourDetails(Scanner sc, AbstractTour tour) {
+		view.printAndEndLine(tour.getLocalizedDetails(view, currency));
 
 		view.printAndEndLine(View.USER_TOURS_DETAILS);
 		view.printAndEndLine(View.INPUT_RETURN);
@@ -270,14 +247,5 @@ public class Controller {
 		}
 
 		return inputValue;
-	}
-
-	private String cullLeadingZeroes(String value) {
-		int zeroes = 0;
-
-		while (zeroes < value.length() && value.charAt(zeroes) == '0')
-			zeroes++;
-
-		return value.substring(zeroes);
 	}
 }

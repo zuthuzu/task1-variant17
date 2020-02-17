@@ -1,21 +1,21 @@
-package ua.kpi.tef.zu.model;
+package ua.kpi.tef.zu.model.tourfactory;
 
 import ua.kpi.tef.zu.controller.TourProperties;
+import ua.kpi.tef.zu.view.View;
+
+import java.text.DecimalFormat;
 
 /**
- * Created by Anton Domin on 2020-02-15
+ * Created by Anton Domin on 2020-02-17
  */
 
-public class Tour {
+public abstract class AbstractTour {
 	private String country;
 	private String goal;
 	private String transport;
 	private String food;
 	private String days;
 	private int price;
-
-	public Tour() {
-	}
 
 	public void setProperty(TourProperties property, String value) {
 		switch (property) {
@@ -49,6 +49,8 @@ public class Tour {
 
 	public void setPrice(int price) { this.price = price; }
 
+	public abstract void setSpecials(String[] tourSpecials);
+
 	public String getProperty(TourProperties property) {
 		switch (property) {
 			case COUNTRIES:
@@ -77,6 +79,28 @@ public class Tour {
 	public String getDays() { return days; }
 
 	public int getPrice() { return price; }
+
+	public String getLocalizedBrief(View view) {
+		return view.getLocalizedText(getCountry()) + ", " +
+				view.getLocalizedText(getGoal()) + ", " +
+				view.getLocalizedText(TourProperties.DAYS.toString()) + ": " +
+				view.getLocalizedText(view.cullLeadingZeroes(getDays())) + ", " +
+				view.getLocalizedText(TourProperties.TRANSPORT.toString()) + ": " +
+				view.getLocalizedText(getTransport()) + ".";
+	}
+
+	public String getLocalizedDetails (View view, char currency) {
+		DecimalFormat moneyFormat = new DecimalFormat("0.00");
+
+		return view.getLocalizedText(TourProperties.COUNTRIES.toString()) + ": " + view.getLocalizedText(getCountry()) + "\n"
+				+ view.getLocalizedText(TourProperties.DAYS.toString()) + ": " + view.cullLeadingZeroes(getDays()) + "\n"
+				+ view.getLocalizedText(TourProperties.TRANSPORT.toString()) + ": " + view.getLocalizedText(getTransport()) + "\n"
+				+ view.getLocalizedText(TourProperties.FOOD.toString()) + ": " + view.getLocalizedText(getFood()) + "\n"
+				+ getLocalizedSpecials(view) + "\n"
+				+ view.getLocalizedText(View.PROPERTY_PRICE) + ": " + currency + moneyFormat.format(getPrice());
+	}
+
+	public abstract String getLocalizedSpecials(View view);
 
 	@Override
 	public String toString() {
