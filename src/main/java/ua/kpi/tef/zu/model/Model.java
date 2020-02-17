@@ -37,6 +37,11 @@ public class Model {
 		activeTours.add(tour);
 	}
 
+	/**
+	 * Returns all values of a given property in current tour selection, for filtering purposes.
+	 * @param property which property should be queried
+	 * @return array of non-repeating string tokens in the exact way they're stored in tours
+	 */
 	public String[] getAvailableValues(TourProperties property) {
 		TreeSet<String> valuePool = new TreeSet<>();
 
@@ -128,6 +133,10 @@ public class Model {
 		}
 	}
 
+
+	/**
+	 * At the moment sorts only by price, in ascending order, via bubblesort.
+	 */
 	private void sortFilteredTours() {
 		if (filteredTours.isEmpty()) {
 			return;

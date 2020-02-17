@@ -3,7 +3,6 @@ package ua.kpi.tef.zu.model.tourfactory;
 import ua.kpi.tef.zu.view.View;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 /**
