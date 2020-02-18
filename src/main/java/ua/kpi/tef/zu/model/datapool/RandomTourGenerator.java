@@ -93,7 +93,7 @@ public class RandomTourGenerator {
 		int numberOfOffers;
 		int randomPropertyValue;
 
-		numberOfOffers = (int) (Math.random() * 4 + 1); //1..6 special offers potentially, but they might double up
+		numberOfOffers = (int) (Math.random() * 7 + 1); //1..6 special offers potentially, but they might double up
 
 		for (int i = 0; i < numberOfOffers; i++) {
 			if (tourGoal.equals(TravelGoals.SHOPPING.toString())) {
