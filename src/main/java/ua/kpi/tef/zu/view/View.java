@@ -2,7 +2,6 @@ package ua.kpi.tef.zu.view;
 
 import ua.kpi.tef.zu.SupportedLanguages;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
