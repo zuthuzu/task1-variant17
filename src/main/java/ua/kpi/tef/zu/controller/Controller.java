@@ -15,9 +15,9 @@ import java.util.Scanner;
 public class Controller {
 
 	@SuppressWarnings("SpellCheckingInspection")
-	private final String inputTokens = "1234567890ABCDE";
-	private final int howManyTopToursToDisplay = 10; //this number must not exceed the length of inputTokens
-	private final char currency = '\u20AC'; //euro
+	private final static String inputTokens = "1234567890ABCDE";
+	private final static int howManyTopToursToDisplay = 10; //this number must not exceed the length of inputTokens
+	private final static char currency = '\u20AC'; //euro
 
 	// Constructor
 	private Model model;

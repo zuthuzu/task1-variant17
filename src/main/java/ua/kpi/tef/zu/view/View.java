@@ -13,7 +13,7 @@ import java.util.ResourceBundle;
 public class View {
 	private SupportedLanguages currentLanguage;
 	private ResourceBundle bundle;
-	private final String BUNDLE_NAME = "travel17";
+	private final static String BUNDLE_NAME = "travel17";
 
 	public static final String USER_WELCOME = "user.welcome";
 	public static final String USER_BYE = "user.bye";
