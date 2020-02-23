@@ -15,9 +15,9 @@ import java.util.Scanner;
 public class Controller {
 
 	@SuppressWarnings("SpellCheckingInspection")
-	private final static String inputTokens = "1234567890ABCDE";
-	private final static int howManyTopToursToDisplay = 10; //this number must not exceed the length of inputTokens
-	private final static char currency = '\u20AC'; //euro
+	private final static String INPUT_TOKENS = "1234567890ABCDE";
+	private final static int HOW_MANY_TOP_TOURS_TO_DISPLAY = 10; //this number must not exceed the length of inputTokens
+	private final static char CURRENCY = '\u20AC'; //euro
 
 	// Constructor
 	private Model model;
@@ -114,17 +114,17 @@ public class Controller {
 		int menuItemNumber = 0;
 
 		for (TourProperties property : TourProperties.values()) {
-			view.printAndKeepLine(inputTokens.charAt(menuItemNumber++) + ":");
+			view.printAndKeepLine(INPUT_TOKENS.charAt(menuItemNumber++) + ":");
 			view.printAndEndLine((property.toString()));
 		}
 
-		view.printAndKeepLine(inputTokens.charAt(menuItemNumber++) + ":");
+		view.printAndKeepLine(INPUT_TOKENS.charAt(menuItemNumber++) + ":");
 		view.printAndEndLine(View.INPUT_VIEW_ASCENDING);
 
-		view.printAndKeepLine(inputTokens.charAt(menuItemNumber++) + ":");
+		view.printAndKeepLine(INPUT_TOKENS.charAt(menuItemNumber++) + ":");
 		view.printAndEndLine(View.INPUT_VIEW_DESCENDING);
 
-		view.printAndKeepLine(inputTokens.charAt(menuItemNumber++) + ":");
+		view.printAndKeepLine(INPUT_TOKENS.charAt(menuItemNumber++) + ":");
 		view.printAndEndLine(View.INPUT_EXIT);
 	}
 
@@ -140,7 +140,7 @@ public class Controller {
 		view.printAndEndLine(property.toString());
 
 		for (int i = 0; i < property.getPool().size(); i++) {
-			view.printAndKeepLine(inputTokens.charAt(i) + ":");
+			view.printAndKeepLine(INPUT_TOKENS.charAt(i) + ":");
 			view.printAndEndLine(view.cullLeadingZeroes(property.getPool().get(i)));
 		}
 		view.printAndEndLine(View.INPUT_DROP_FILTER);
@@ -148,7 +148,7 @@ public class Controller {
 	}
 
 	private void selectTopTour(Scanner sc, boolean ascendingOrder) {
-		AbstractTour[] topTours = model.getTopTours(ascendingOrder, howManyTopToursToDisplay);
+		AbstractTour[] topTours = model.getTopTours(ascendingOrder, HOW_MANY_TOP_TOURS_TO_DISPLAY);
 		int chosenMenuItem;
 
 		do {
@@ -166,7 +166,7 @@ public class Controller {
 		int menuItemNumber = 0;
 
 		for (AbstractTour topTour : topTours) {
-			view.printAndKeepLine(inputTokens.charAt(menuItemNumber++) + ":");
+			view.printAndKeepLine(INPUT_TOKENS.charAt(menuItemNumber++) + ":");
 			view.printAndEndLine(topTour.getLocalizedBrief(view));
 		}
 
@@ -183,7 +183,7 @@ public class Controller {
 	}
 
 	private void showTourDetails(Scanner sc, AbstractTour tour) {
-		view.printAndEndLine(tour.getLocalizedDetails(view, currency));
+		view.printAndEndLine(tour.getLocalizedDetails(view, CURRENCY));
 
 		view.printAndEndLine(View.USER_TOURS_DETAILS);
 		view.printAndEndLine(View.INPUT_RETURN);
@@ -215,9 +215,9 @@ public class Controller {
 	 * @param value Character received taken the user input
 	 * @return Number of menu item that this character represents
 	 */
-	private int numericalMenuChoice(char value) { return inputTokens.indexOf(value); }
+	private int numericalMenuChoice(char value) { return INPUT_TOKENS.indexOf(value); }
 
-	private int numericalMenuChoice(String value) { return inputTokens.indexOf(value.charAt(0)); }
+	private int numericalMenuChoice(String value) { return INPUT_TOKENS.indexOf(value.charAt(0)); }
 
 	/**
 	 * Automatically creates a regex for filtering user input in response to menus.
@@ -232,7 +232,7 @@ public class Controller {
 	 * @return Regular expression that will match only inputs with correct group options
 	 */
 	private String createChoiceRegex(int numberOfChoices, boolean multipleChoice, boolean allowExit) {
-		return "[" + inputTokens.substring(0, numberOfChoices) + "]"
+		return "[" + INPUT_TOKENS.substring(0, numberOfChoices) + "]"
 				+ (multipleChoice ? "+|-" : "") + (allowExit ? "|\\.+" : "");
 	}
 
